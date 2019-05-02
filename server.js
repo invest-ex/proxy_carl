@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const axios = require('axios');
+const newRelic = require('newrelic');
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -61,17 +62,15 @@ app.use('/stocks/tags/:tag', (req, res) => {
     .catch(err => res.send(err));
 });
 app.use('/stocks/:a/fonts/:fontname', (req, res) => {
-  console.log(req.params.stockId, 'is stock id');
   ChartRoute.get(`/stocks/${req.params.a}/fonts/${req.params.fontname}`)
     .then(response => res.send(response.data))
-    .catch(err => res.send(err));
+    .catch(err => res.status(404).end());
 
 });
 app.use('/api/chart/:stockId', (req, res) => {
-  console.log(req.params.stockId);
   ChartRoute.get(`/api/chart/${req.params.stockId}`)
     .then(response => res.send(response.data))
-    .catch(err => res.send(err));
+    .catch(err => {console.log(err); res.send()});
 });
 
 app.listen(port, () => {
